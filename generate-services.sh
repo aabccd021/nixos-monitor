@@ -6,6 +6,9 @@ services=$(
 )
 echo "["
 for service in $services; do
-  echo "  \"$service\""
+  details=$(systemctl show "$service" --property ExecStart --property ExecStop --property SuccessAction)
+  if [ -n "$details" ]; then
+    echo "  \"$service\""
+  fi
 done
 echo "]"
