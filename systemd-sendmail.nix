@@ -52,9 +52,13 @@ in
 
         }
       ]
-      ++ (builtins.map (serviceName: {
-        services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
-      }) (lib.lists.subtractLists ignoredServices cfg.services))
+      ++ (lib.pipe cfg.services [
+        (lib.lists.subtractLists ignoredServices)
+        (lib.lists.filter (lib.strings.hasInfix "@") cfg.services)
+        (builtins.map (serviceName: {
+          services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
+        }))
+      ])
 
     )
   );
