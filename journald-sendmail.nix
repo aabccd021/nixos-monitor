@@ -46,7 +46,7 @@ in
           script = ''
             cursor_file="/var/lib/journald-sendmail/cursors/$SOURCE_NAME"
             mkdir -p "$(dirname "$cursor_file")"
-            journalctl --quiet --cursor-file="$cursor_file" ${lib.escapeShellArgs sourceCfg.args}) \
+            journalctl --quiet --cursor-file="$cursor_file" ${lib.escapeShellArgs sourceCfg.args} \
               | sendmail
           '';
         };
