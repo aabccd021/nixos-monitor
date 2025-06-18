@@ -6,6 +6,26 @@
 }:
 let
   cfg = config.services.systemd-sendmail;
+  ignoredServices = [
+    "auditd"
+    "dracut-mount"
+    "nfs-kernel-server"
+    "nfs-server"
+    "plymouth-quit-wait"
+    "plymouth-quit"
+    "plymouth-start"
+    "rpc-statd-notify"
+    "smb"
+    "sops-install-secrets"
+    "syslog"
+    "systemd-hwdb-update"
+    "systemd-pcrphase-initrd"
+    "systemd-quotacheck-root"
+    "systemd-quotacheck"
+    "systemd-soft-reboot"
+    "systemd-sysusers"
+    "systemd-udev-load-credentials"
+  ];
 in
 {
 
@@ -34,7 +54,7 @@ in
       ]
       ++ (builtins.map (serviceName: {
         services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
-      }) cfg.services)
+      }) (lib.lists.subtractList ignoredServices cfg.services))
 
     )
   );
