@@ -25,9 +25,12 @@
 
       nixosModules.systemd-sendmail = ./systemd-sendmail.nix;
 
+      nixosModules.journald-sendmail = ./journald-sendmail.nix;
+
       nixosModules.default = {
         imports = [
           nixosModules.systemd-sendmail
+          nixosModules.journald-sendmail
         ];
       };
 
