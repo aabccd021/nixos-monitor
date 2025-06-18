@@ -13,7 +13,6 @@ services=$(
 )
 echo "[" >"$filename"
 for service in $services; do
-  echo "Processing service: $service"
   if echo "$service" | grep -q '^notify-failure@'; then
     continue
   fi
