@@ -14,7 +14,7 @@ for service in $services; do
   fi
   exec=$(systemctl show "$service" --property ExecStart --property ExecStop --value)
   success_action=$(systemctl show "$service" --property SuccessAction --value)
-  if [ -z "$exec" ] && [ "$success_action" != "none" ]; then
+  if [ -z "$exec" ] && [ "$success_action" == "none" ]; then
     continue
   fi
   echo "  \"$service\"" >>"$tmpfile"
