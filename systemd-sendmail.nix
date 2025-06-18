@@ -7,17 +7,6 @@
 let
   cfg = config.services.systemd-sendmail;
 
-  hasServiceConfigField =
-    name: field: lib.attrsets.hasAttrByPath [ name "serviceConfig" field ] config.systemd.services;
-
-  shouldEnable =
-    name:
-    !(lib.strings.hasInfix "@" name)
-    && (
-      hasServiceConfigField name "ExecStart"
-      || hasServiceConfigField name "ExecStop"
-      || hasServiceConfigField name "SuccessAction"
-    );
 in
 {
 
@@ -44,12 +33,9 @@ in
 
         }
       ]
-      ++ (lib.pipe cfg.services [
-        (lib.lists.filter shouldEnable)
-        (builtins.map (serviceName: {
-          services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
-        }))
-      ])
+      ++ (builtins.map (serviceName: {
+        services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
+      }) cfg.services)
 
     )
   );
