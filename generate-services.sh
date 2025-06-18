@@ -1,3 +1,5 @@
+set -x
+
 services=$(
   systemctl list-units --no-legend --no-pager --type service --all |
     sed 's/^●//' |
