@@ -48,7 +48,13 @@
         ];
       };
 
+      generate-services = pkgs.writeShellApplication {
+        name = "generate-services";
+        text = builtins.readFile ./generate-services.sh;
+      };
+
       packages = devShells // {
+        generate-services = generate-services;
         formatting = treefmtEval.config.build.check self;
         formatter = formatter;
         allInputs = collectInputs inputs;
