@@ -6,26 +6,18 @@
 }:
 let
   cfg = config.services.systemd-sendmail;
-  ignoredServices = [
-    "auditd"
-    "dracut-mount"
-    "nfs-kernel-server"
-    "nfs-server"
-    "plymouth-quit-wait"
-    "plymouth-quit"
-    "plymouth-start"
-    "rpc-statd-notify"
-    "smb"
-    "sops-install-secrets"
-    "syslog"
-    "systemd-hwdb-update"
-    "systemd-pcrphase-initrd"
-    "systemd-quotacheck-root"
-    "systemd-quotacheck"
-    "systemd-soft-reboot"
-    "systemd-sysusers"
-    "systemd-udev-load-credentials"
-  ];
+
+  hasServiceConfigField =
+    name: field: lib.attrsets.hasAttrByPath [ name "serviceConfig" field ] config.systemd.services;
+
+  shouldEnable =
+    name:
+    !(lib.strings.hasInfix "@" name)
+    && (
+      hasServiceConfigField name "ExecStart"
+      || hasServiceConfigField name "ExecStop"
+      || hasServiceConfigField name "SuccessAction"
+    );
 in
 {
 
@@ -53,8 +45,7 @@ in
         }
       ]
       ++ (lib.pipe cfg.services [
-        (lib.lists.subtractLists ignoredServices)
-        (lib.lists.filter (name: !(lib.strings.hasInfix "@" name)))
+        (lib.lists.filter shouldEnable)
         (builtins.map (serviceName: {
           services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
         }))
