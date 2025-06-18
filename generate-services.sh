@@ -4,11 +4,19 @@ services=$(
     awk '{print $1}' |
     sed 's/\.service$//'
 )
-echo "["
+
+tmpfile=$(mktemp)
+echo "[" >"$tmpfile"
 for service in $services; do
-  details=$(systemctl show "$service" --property ExecStart --property ExecStop --property SuccessAction)
-  if [ -n "$details" ]; then
-    echo "  \"$service\""
+  # if service starts with `notify-failure@`, check using grep
+  if echo "$service" | grep -q '^notify-failure@'; then
+    continue
   fi
+  details=$(systemctl show "$service" --property ExecStart --property ExecStop --property SuccessAction)
+  if [ -z "$details" ]; then
+    continue
+  fi
+  echo "  \"$service\"" >>"$tmpfile"
 done
-echo "]"
+echo "]" >>"$tmpfile"
+cat "$tmpfile"
