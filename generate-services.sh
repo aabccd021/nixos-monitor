@@ -12,8 +12,12 @@ for service in $services; do
   if echo "$service" | grep -q '^notify-failure@'; then
     continue
   fi
-  details=$(systemctl show "$service" --property ExecStart --property ExecStop --property SuccessAction)
-  if [ -z "$details" ]; then
+  exec=$(systemctl show "$service" --property ExecStart --property ExecStop --value)
+  if [ -z "$exec" ]; then
+    continue
+  fi
+  success_action=$(systemctl show "$service" --property SuccessAction --value)
+  if [ "$success_action" == "none" ]; then
     continue
   fi
   echo "  \"$service\"" >>"$tmpfile"
