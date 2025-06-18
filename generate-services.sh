@@ -8,8 +8,7 @@ services=$(
 tmpfile=$(mktemp)
 echo "[" >"$tmpfile"
 for service in $services; do
-  # if service starts with `notify-failure@`, check using grep
-  if echo "$service" | grep -q '^notify-failure@'; then
+  if echo "$service" | grep -q '@'; then
     continue
   fi
   exec=$(systemctl show "$service" --property ExecStart --property ExecStop --value)
