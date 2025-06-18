@@ -54,7 +54,7 @@ in
       ]
       ++ (builtins.map (serviceName: {
         services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
-      }) (lib.lists.subtractList ignoredServices cfg.services))
+      }) (lib.lists.subtractLists ignoredServices cfg.services))
 
     )
   );
