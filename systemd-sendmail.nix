@@ -11,12 +11,12 @@ in
 
   options.services.systemd-sendmail = {
     enable = lib.mkEnableOption "systemd Sendmail Service";
-    notifyFailues = lib.mkOption {
+    notifyFailure = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = "List of systemd service names to monitor for failures.";
     };
-    notifySuccesses = lib.mkOption {
+    notifySuccess = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = "List of systemd service names to monitor for successes.";
