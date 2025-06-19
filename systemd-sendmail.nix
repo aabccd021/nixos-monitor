@@ -46,11 +46,11 @@ in
 
       ++ (builtins.map (serviceName: {
         services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
-      }) cfg.notifyFailures)
+      }) cfg.notifyFailure)
 
       ++ (builtins.map (serviceName: {
         services.${serviceName}.unitConfig.OnSuccess = [ "notify-success@${serviceName}.service" ];
-      }) cfg.notifySuccesses)
+      }) cfg.notifySuccess)
 
     )
   );
