@@ -38,7 +38,7 @@ in
             scriptArgs = "%i";
             path = [ "/run/wrappers" ];
             script = ''
-              echo "Service succeeded: $1" | sendmail
+              echo "Service succeed: $1" | sendmail
             '';
           };
         }
