@@ -1,7 +1,6 @@
 {
   lib,
   config,
-  pkgs,
   ...
 }:
 let
@@ -12,10 +11,15 @@ in
 
   options.services.systemd-sendmail = {
     enable = lib.mkEnableOption "systemd Sendmail Service";
-    services = lib.mkOption {
+    notifyFailues = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = "List of systemd service names to monitor for failures.";
+    };
+    notifySuccesses = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "List of systemd service names to monitor for successes.";
     };
   };
 
@@ -25,17 +29,28 @@ in
         {
           services."notify-failure@" = {
             scriptArgs = "%i";
-            path = [ pkgs.sendmail ];
+            path = [ "/run/current-system/sw/bin" ];
             script = ''
               echo "Service failed: $1" | sendmail
             '';
           };
-
+          services."notify-success@" = {
+            scriptArgs = "%i";
+            path = [ "/run/current-system/sw/bin" ];
+            script = ''
+              echo "Service succeeded: $1" | sendmail
+            '';
+          };
         }
       ]
+
       ++ (builtins.map (serviceName: {
         services.${serviceName}.unitConfig.OnFailure = [ "notify-failure@${serviceName}.service" ];
-      }) cfg.services)
+      }) cfg.notifyFailures)
+
+      ++ (builtins.map (serviceName: {
+        services.${serviceName}.unitConfig.OnSuccess = [ "notify-success@${serviceName}.service" ];
+      }) cfg.notifySuccesses)
 
     )
   );
