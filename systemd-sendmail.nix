@@ -29,14 +29,14 @@ in
         {
           services."notify-failure@" = {
             scriptArgs = "%i";
-            path = [ "/run/current-system/sw/bin" ];
+            path = [ "/run/wrappers" ];
             script = ''
               echo "Service failed: $1" | sendmail
             '';
           };
           services."notify-success@" = {
             scriptArgs = "%i";
-            path = [ "/run/current-system/sw/bin" ];
+            path = [ "/run/wrappers" ];
             script = ''
               echo "Service succeeded: $1" | sendmail
             '';
