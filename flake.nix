@@ -39,7 +39,6 @@
         programs.prettier.enable = true;
         programs.nixfmt.enable = true;
         programs.shfmt.enable = true;
-        settings.formatter.prettier.priority = 1;
         settings.global.excludes = [ "LICENSE" ];
       };
 
