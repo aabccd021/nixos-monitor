@@ -1,7 +1,6 @@
 {
   lib,
   config,
-  pkgs,
   ...
 }:
 let
@@ -40,7 +39,7 @@ in
           startAt = sourceCfg.startAt;
           path = [
             "/run/current-system/sw/"
-            pkgs.sendmail
+            "/run/wrappers/"
           ];
           enableStrictShellChecks = true;
           script = ''
