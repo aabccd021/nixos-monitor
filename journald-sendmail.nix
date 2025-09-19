@@ -53,10 +53,11 @@ in
             journalctl --cursor-file="$cursor_file" ${lib.escapeShellArgs sourceCfg.args} > "$tmpfile" || journalctl_exit_code=$?
             content=$(cat "$tmpfile")
 
-            if [ "$content" = "-- No entries --" ] && [ $journalctl_exit_code -eq 1 ]; then
+            if [ "$content" = "-- No entries --" ]; then
               echo "No new log entries found."
               exit 0
             fi
+
             if [ "$journalctl_exit_code" -eq 0 ]; then
               echo "New log entries found, sending email."
               sendmail < "$tmpfile"
