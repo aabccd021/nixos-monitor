@@ -45,10 +45,26 @@ in
           script = ''
             cursor_file="/var/lib/journald-sendmail/cursors/$SOURCE_NAME"
             mkdir -p "$(dirname "$cursor_file")"
-            content="$(journalctl --quiet --cursor-file="$cursor_file" ${lib.escapeShellArgs sourceCfg.args})"
-            if [ -n "$content" ]; then
-              echo "$content" | sendmail
+
+            tmpfile=$(mktemp)
+            trap 'rm -f "$tmpfile"' EXIT
+
+            journalctl_exit_code=0
+            journalctl --cursor-file="$cursor_file" ${lib.escapeShellArgs sourceCfg.args} > "$tmpfile" || journalctl_exit_code=$?
+            content=$(cat "$tmpfile")
+
+            if [ "$content" = "-- No entries --" ] && [ $journalctl_exit_code -eq 1 ]; then
+              echo "No new log entries for $SOURCE_NAME"
+              exit 0
             fi
+            if [ "$journalctl_exit_code" -eq 0 ]; then
+              sendmail < "$tmpfile"
+              exit 0
+            fi
+
+            echo "journalctl failed with exit code $journalctl_exit_code with content:"
+            cat "$tmpfile"
+            exit "$journalctl_exit_code"
           '';
         };
       }) cfg.sources
