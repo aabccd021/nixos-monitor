@@ -54,10 +54,11 @@ in
             content=$(cat "$tmpfile")
 
             if [ "$content" = "-- No entries --" ] && [ $journalctl_exit_code -eq 1 ]; then
-              echo "No new log entries for $SOURCE_NAME"
+              echo "No new log entries found."
               exit 0
             fi
             if [ "$journalctl_exit_code" -eq 0 ]; then
+              echo "New log entries found, sending email."
               sendmail < "$tmpfile"
               exit 0
             fi
