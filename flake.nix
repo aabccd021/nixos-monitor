@@ -50,19 +50,7 @@
         ];
       };
 
-      generate-services = pkgs.writeShellApplication {
-        name = "generate-services";
-        text = builtins.readFile ./generate-services.sh;
-      };
-
-      generate-timers = pkgs.writeShellApplication {
-        name = "generate-timers";
-        text = builtins.readFile ./generate-timers.sh;
-      };
-
       packages = devShells // {
-        generate-services = generate-services;
-        generate-timers = generate-timers;
         formatting = treefmtEval.config.build.check self;
         formatter = formatter;
         allInputs = collectInputs inputs;
