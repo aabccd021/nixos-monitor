@@ -22,14 +22,14 @@
 
     {
 
-      # packages.x86_64-linux.formatting = treefmtEval.config.build.check self;
-      # checks.x86_64-linux.formatting = treefmtEval.config.build.check self;
-      # formatter.x86_64-linux = treefmtEval.config.build.wrapper;
-      # nixosModules.default = ./nixosConfiguration.nix;
-      # devShells.x86_64-linux = pkgs.mkShellNoCC {
-      #   buildInputs = [
-      #     pkgs.nixd
-      #   ];
-      # };
+      packages.x86_64-linux.formatting = treefmtEval.config.build.check self;
+      checks.x86_64-linux.formatting = treefmtEval.config.build.check self;
+      formatter.x86_64-linux = treefmtEval.config.build.wrapper;
+      nixosModules.default = ./nixosConfiguration.nix;
+      devShells.x86_64-linux.default = pkgs.mkShellNoCC {
+        buildInputs = [
+          pkgs.nixd
+        ];
+      };
     };
 }
