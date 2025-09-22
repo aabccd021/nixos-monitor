@@ -23,16 +23,9 @@
 
       pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
 
-      nixosModules.systemd-sendmail = ./systemd-sendmail.nix;
-
       nixosModules.journald-sendmail = ./journald-sendmail.nix;
 
-      nixosModules.default = {
-        imports = [
-          nixosModules.systemd-sendmail
-          nixosModules.journald-sendmail
-        ];
-      };
+      nixosModules.default = nixosModules.journald-sendmail;
 
       treefmtEval = inputs.treefmt-nix.lib.evalModule pkgs {
         projectRootFile = "flake.nix";
