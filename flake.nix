@@ -7,25 +7,8 @@
   outputs =
     { self, ... }@inputs:
     let
-      lib = inputs.nixpkgs.lib;
-
-      collectInputs =
-        is:
-        pkgs.linkFarm "inputs" (
-          builtins.mapAttrs (
-            name: i:
-            pkgs.linkFarm name {
-              self = i.outPath;
-              deps = collectInputs (lib.attrByPath [ "inputs" ] { } i);
-            }
-          ) is
-        );
 
       pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
-
-      nixosModules.journald-sendmail = ./journald-sendmail.nix;
-
-      nixosModules.default = nixosModules.journald-sendmail;
 
       treefmtEval = inputs.treefmt-nix.lib.evalModule pkgs {
         projectRootFile = "flake.nix";
@@ -35,33 +18,18 @@
         settings.global.excludes = [ "LICENSE" ];
       };
 
-      formatter = treefmtEval.config.build.wrapper;
-
-      devShells.default = pkgs.mkShellNoCC {
-        buildInputs = [
-          pkgs.nixd
-        ];
-      };
-
-      packages = devShells // {
-        formatting = treefmtEval.config.build.check self;
-        formatter = formatter;
-        allInputs = collectInputs inputs;
-      };
-
     in
 
     {
 
-      packages.x86_64-linux = packages // {
-        gcroot = pkgs.linkFarm "gcroot" packages;
-      };
-
-      checks.x86_64-linux = packages;
-      formatter.x86_64-linux = formatter;
-      devShells.x86_64-linux = devShells;
-
-      nixosModules = nixosModules;
-
+      # packages.x86_64-linux.formatting = treefmtEval.config.build.check self;
+      # checks.x86_64-linux.formatting = treefmtEval.config.build.check self;
+      # formatter.x86_64-linux = treefmtEval.config.build.wrapper;
+      # nixosModules.default = ./nixosConfiguration.nix;
+      # devShells.x86_64-linux = pkgs.mkShellNoCC {
+      #   buildInputs = [
+      #     pkgs.nixd
+      #   ];
+      # };
     };
 }
